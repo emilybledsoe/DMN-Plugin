@@ -1,1 +1,1 @@
-# DmnSimplePlugin
+# Dmn Plugin
