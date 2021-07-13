@@ -581,6 +581,8 @@ export default class Dropdown extends PureComponent {
             closeModal={ this.closeResults }
             evaluation={ evaluation }
             displayInDiagram={ this.highlightResults }
+            initiallySelectedDecision={ decisions[0] }
+            decisions={ decisions }
           />
         ) : modalOpen ? (
           <TestingModal

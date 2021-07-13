@@ -700,7 +700,9 @@ class Dropdown extends camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MO
     }, "Deploy DMN"))))), modalOpen && evaluation ? /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_ResultsModal__WEBPACK_IMPORTED_MODULE_5__["default"], {
       closeModal: this.closeResults,
       evaluation: evaluation,
-      displayInDiagram: this.highlightResults
+      displayInDiagram: this.highlightResults,
+      initiallySelectedDecision: decisions[0],
+      decisions: decisions
     }) : modalOpen ? /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_TestingModal__WEBPACK_IMPORTED_MODULE_2__["default"], {
       closeModal: () => this.setState({
         modalOpen: false
@@ -1248,15 +1250,52 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/camunda-modeler-plugin-helpers/react.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var camunda_modeler_plugin_helpers_components__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! camunda-modeler-plugin-helpers/components */ "./node_modules/camunda-modeler-plugin-helpers/components.js");
+/* harmony import */ var formik__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! formik */ "./node_modules/formik/dist/formik.esm.js");
+/* harmony import */ var _DecisionsDropdown__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./DecisionsDropdown */ "./client/DecisionsDropdown.js");
  // eslint-disable-line no-unused-vars
+
+
 
 
 function ResultsModal(props) {
   const {
     closeModal,
     evaluation,
-    displayInDiagram
+    displayInDiagram,
+    initiallySelectedDecision,
+    decisions
   } = props;
+  const decisionTaken = initiallySelectedDecision; // flatten to make it easier to display and extend with own variables
+  // TODO: get rid of nested loop
+
+  const allInputVariables = decisions.flatMap(decision => {
+    return decision.variables.map(variable => ({
+      decision: decision.decision,
+      decisionId: decision.decisionId,
+      name: variable.expression,
+      type: variable.type,
+      value: ''
+    }));
+  });
+  const allowedDecisions = [decisionTaken.decisionId, ...decisionTaken.downstreamDecisions];
+  const filteredInputVariables = allInputVariables.filter(variable => allowedDecisions.includes(variable.decisionId));
+  const initialValues = {
+    variables: filteredInputVariables
+  };
+
+  const updateDecision = value => {
+    this.setState({
+      decisionTaken: value
+    });
+  };
+
+  const handleSubmit = values => {
+    this.props.evaluate({
+      variables: values.variables,
+      decision: this.state.decisionTaken
+    });
+  };
+
   const {
     error,
     results
@@ -1270,7 +1309,58 @@ function ResultsModal(props) {
 
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(camunda_modeler_plugin_helpers_components__WEBPACK_IMPORTED_MODULE_1__["Modal"], {
     onClose: onClose
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(camunda_modeler_plugin_helpers_components__WEBPACK_IMPORTED_MODULE_1__["Modal"].Title, null, "Test Results"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(camunda_modeler_plugin_helpers_components__WEBPACK_IMPORTED_MODULE_1__["Modal"].Body, null, error ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ErrorResults, {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(camunda_modeler_plugin_helpers_components__WEBPACK_IMPORTED_MODULE_1__["Modal"].Title, null, "Test Results"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(camunda_modeler_plugin_helpers_components__WEBPACK_IMPORTED_MODULE_1__["Modal"].Body, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3", null, "Decision to evaluate"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_DecisionsDropdown__WEBPACK_IMPORTED_MODULE_3__["default"], {
+    selected: decisionTaken,
+    decisions: decisions,
+    onDecisionChanged: updateDecision
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3", null, "Variable inputs"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(formik__WEBPACK_IMPORTED_MODULE_2__["Formik"], {
+    enableReinitialize: true,
+    initialValues: initialValues,
+    onSubmit: handleSubmit
+  }, ({
+    values
+  }) => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(formik__WEBPACK_IMPORTED_MODULE_2__["Form"], {
+    id: "dmnTestingInputVarsForm"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(formik__WEBPACK_IMPORTED_MODULE_2__["FieldArray"], {
+    name: "variables",
+    render: arrayHelpers => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, values.variables && values.variables.length > 0 ? values.variables.map((_, index) => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      key: index
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(formik__WEBPACK_IMPORTED_MODULE_2__["Field"], {
+      name: `variables.${index}.decision`,
+      disabled: true
+    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(formik__WEBPACK_IMPORTED_MODULE_2__["Field"], {
+      name: `variables.${index}.name`
+    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(formik__WEBPACK_IMPORTED_MODULE_2__["Field"], {
+      name: `variables.${index}.value`,
+      placeholder: "<provide value>"
+    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(formik__WEBPACK_IMPORTED_MODULE_2__["Field"], {
+      name: `variables.${index}.type`,
+      component: "select"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
+      value: ""
+    }, "Select type"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
+      value: "string"
+    }, "string"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
+      value: "integer"
+    }, "integer"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
+      value: "boolean"
+    }, "boolean"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
+      value: "long"
+    }, "long"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
+      value: "double"
+    }, "double"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
+      value: "date"
+    }, "date")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+      type: "button",
+      onClick: () => arrayHelpers.remove(index)
+    }, "-"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+      type: "button",
+      onClick: () => arrayHelpers.insert(index + 1, '')
+    }, "+"))) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+      type: "button",
+      onClick: () => arrayHelpers.push('')
+    }, "Add a variable"))
+  }))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(camunda_modeler_plugin_helpers_components__WEBPACK_IMPORTED_MODULE_1__["Modal"].Body, null, error ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(ErrorResults, {
     error: error
   }) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(SuccessResults, {
     results: results
@@ -1280,9 +1370,12 @@ function ResultsModal(props) {
     onClick: goBack
   }, "Go back"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
     type: "button",
+    className: "btn btn-secondary",
+    onClick: goBack
+  }, "Save results"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+    type: "button",
     className: "btn btn-primary",
-    onClick: onClose,
-    autoFocus: true
+    onClick: onClose
   }, "Close"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
     type: "button",
     className: "btn btn-primary",
