@@ -32,8 +32,8 @@ export const buildJsonFromEmptyXML = async ({ xml }) => {
 
     return {
       id: d.id,
-      inputs: new Array(),
-      outputs: new Array(),
+      inputs: decisionLogic.get('input').map(buildParseableInput),
+      outputs: decisionLogic.get('output').map(buildParseableOutput),
       rules: new Array(),
       name: d.get('name')
     };
