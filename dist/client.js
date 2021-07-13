@@ -122,6 +122,154 @@ function DecisionsDropdown(props) {
 
 /***/ }),
 
+/***/ "./client/DeployModal.js":
+/*!*******************************!*\
+  !*** ./client/DeployModal.js ***!
+  \*******************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return DeployModal; });
+/* harmony import */ var camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! camunda-modeler-plugin-helpers/react */ "./node_modules/camunda-modeler-plugin-helpers/react.js");
+/* harmony import */ var camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var camunda_modeler_plugin_helpers_components__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! camunda-modeler-plugin-helpers/components */ "./node_modules/camunda-modeler-plugin-helpers/components.js");
+/* harmony import */ var _Dropzone__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Dropzone */ "./client/Dropzone.js");
+/* eslint-disable no-unused-vars */
+
+ // polyfill upcoming structural components
+
+const Title = camunda_modeler_plugin_helpers_components__WEBPACK_IMPORTED_MODULE_1__["Modal"].Title || (({
+  children
+}) => /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h2", null, children));
+
+const Body = camunda_modeler_plugin_helpers_components__WEBPACK_IMPORTED_MODULE_1__["Modal"].Body || (({
+  children
+}) => /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, children));
+
+const Footer = camunda_modeler_plugin_helpers_components__WEBPACK_IMPORTED_MODULE_1__["Modal"].Footer || (({
+  children
+}) => /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, children));
+
+
+
+const path = __webpack_require__(/*! path */ "./node_modules/node-libs-browser/node_modules/path-browserify/index.js");
+
+function DeployModal({
+  initValues,
+  onClose
+}) {
+  const [inputFile, setInputFile] = Object(camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0__["useState"])(initValues.inputFile);
+  const [amountOutputs, setAmountOutputs] = Object(camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0__["useState"])(initValues.amountOutputs);
+  const [tableName, setTableName] = Object(camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0__["useState"])(initValues.tableName);
+  const [hitPolicy, setHitPolicy] = Object(camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0__["useState"])(initValues.hitPolicy);
+  const [chosenFileText, setChosenFileText] = Object(camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0__["useState"])('No file selected.');
+
+  const isValid = () => {
+    return !!amountOutputs && !!inputFile && !!tableName && !!hitPolicy;
+  };
+
+  const handleInputFileChange = event => {
+    const file = event.target.files[0];
+
+    if (!file) {
+      return;
+    }
+
+    setTableName(getFileNameWithoutExtension(file));
+    setInputFile(file);
+    setChosenFileText(file.name);
+  };
+
+  const handleInputFileClick = event => {
+    const realInput = document.getElementById('inputFile');
+    realInput.click();
+  };
+
+  const handleSubmit = () => onClose({
+    amountOutputs,
+    inputFile,
+    tableName,
+    hitPolicy
+  });
+
+  const handleDrop = (files = []) => {
+    if (!files.length) {
+      return;
+    }
+
+    handleInputFileChange({
+      target: {
+        files
+      }
+    });
+  };
+
+  return /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(camunda_modeler_plugin_helpers_components__WEBPACK_IMPORTED_MODULE_1__["Modal"], {
+    onClose: onClose
+  }, /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Dropzone__WEBPACK_IMPORTED_MODULE_2__["default"], {
+    onDrop: handleDrop
+  }, /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Title, null, "Deploy Diagram"), /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Body, null, /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
+    id: "import-form",
+    className: "import-form",
+    onSubmit: handleSubmit
+  }, /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("fieldset", null, /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "fields"
+  }, /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "form-group"
+  }, /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, "Deployment Name"), /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+    type: "text",
+    id: "tableName",
+    className: "form-control",
+    name: "tableName",
+    placeholder: "Input a name for your deployment.",
+    value: tableName,
+    onChange: event => setTableName(event.target.value)
+  })), /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "form-group"
+  }, /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, "Tenant ID"), /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+    type: "text",
+    id: "tenantId",
+    className: "form-control",
+    name: "tenantId",
+    placeholder: "Optional",
+    value: tableName,
+    onChange: null
+  })), /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("legend", null, "Endpoint Configuration"), /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "form-group"
+  }, /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, "REST Endpoint"), /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+    type: "text",
+    id: "restEndpoint",
+    className: "form-control",
+    name: "restEndpoint",
+    placeholder: "Input REST Endpoint.",
+    value: tableName,
+    onChange: null
+  })))))), /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Footer, null, /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "import-buttons"
+  }, /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+    type: "button",
+    className: "btn btn-secondary",
+    onClick: () => onClose()
+  }, "Cancel"), /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+    type: "submit",
+    className: "btn btn-primary",
+    disabled: !isValid(),
+    form: "import-form"
+  }, "Deploy")))));
+} // helpers ////////////////////////
+
+const getFileNameWithoutExtension = file => {
+  return path.basename(file.path, '.xlsx');
+};
+
+const getDirectory = file => {
+  return path.dirname(file.path) + '/';
+};
+
+/***/ }),
+
 /***/ "./client/Dropdown.js":
 /*!****************************!*\
   !*** ./client/Dropdown.js ***!
@@ -143,7 +291,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _results_highlighting_ResultsHighlighting__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./results-highlighting/ResultsHighlighting */ "./client/results-highlighting/ResultsHighlighting.js");
 /* harmony import */ var _ImportModal__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./ImportModal */ "./client/ImportModal.js");
 /* harmony import */ var _helper_hitPolicies__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./helper/hitPolicies */ "./client/helper/hitPolicies.js");
-/* harmony import */ var _converter__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../converter */ "./converter/index.js");
+/* harmony import */ var _DeployModal__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./DeployModal */ "./client/DeployModal.js");
+/* harmony import */ var _converter__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../converter */ "./converter/index.js");
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 /**
@@ -157,6 +306,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
  */
 
 /* eslint-disable no-unused-vars*/
+
 
 
 
@@ -477,7 +627,7 @@ class Dropdown extends camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MO
       hitPolicy,
       aggregation
     } = options;
-    const xml = Object(_converter__WEBPACK_IMPORTED_MODULE_10__["convertXlsxToDmn"])({
+    const xml = Object(_converter__WEBPACK_IMPORTED_MODULE_11__["convertXlsxToDmn"])({
       buffer,
       amountOutputs,
       tableName,
@@ -529,6 +679,9 @@ class Dropdown extends camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MO
     this.setState({
       excelModalOpen: false
     });
+    this.setState({
+      deployModalOpen: false
+    });
 
     if (!importDetails) {
       return;
@@ -540,6 +693,12 @@ class Dropdown extends camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MO
   excelOpenModal() {
     this.setState({
       excelModalOpen: true
+    });
+  }
+
+  deployOpenModal() {
+    this.setState({
+      deployModalOpen: true
     });
   }
 
@@ -578,7 +737,7 @@ class Dropdown extends camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MO
       const {
         contents,
         exportedDecisionTables
-      } = await Object(_converter__WEBPACK_IMPORTED_MODULE_10__["convertDmnToXlsx"])({
+      } = await Object(_converter__WEBPACK_IMPORTED_MODULE_11__["convertDmnToXlsx"])({
         xml: file.contents
       }); // (3) save file on disk
 
@@ -631,7 +790,7 @@ class Dropdown extends camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MO
       const {
         contents,
         exportedDecisionTables
-      } = await Object(_converter__WEBPACK_IMPORTED_MODULE_10__["convertEmptyDmnToXlsx"])({
+      } = await Object(_converter__WEBPACK_IMPORTED_MODULE_11__["convertEmptyDmnToXlsx"])({
         xml: file.contents
       }); // (3) save file on disk
 
@@ -659,7 +818,8 @@ class Dropdown extends camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MO
       decisions,
       evaluation,
       modalOpen,
-      excelModalOpen
+      excelModalOpen,
+      deployModalOpen
     } = this.state;
     const initValues = {
       inputFile,
@@ -696,7 +856,8 @@ class Dropdown extends camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MO
     }, "View/Update DMN Tests"), /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
       class: "row"
     }, "Regression Test"), /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
-      class: "row"
+      class: "row",
+      onClick: this.deployOpenModal.bind(this)
     }, "Deploy DMN"))))), modalOpen && evaluation ? /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_ResultsModal__WEBPACK_IMPORTED_MODULE_5__["default"], {
       closeModal: this.closeResults,
       evaluation: evaluation,
@@ -710,7 +871,10 @@ class Dropdown extends camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MO
       decisions: decisions,
       initiallySelectedDecision: decisions[0],
       evaluate: this.evaluateDmn
-    }) : this.state.excelModalOpen && /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_ImportModal__WEBPACK_IMPORTED_MODULE_8__["default"], {
+    }) : this.state.excelModalOpen ? /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_ImportModal__WEBPACK_IMPORTED_MODULE_8__["default"], {
+      onClose: this.handleConfigClosed.bind(this),
+      initValues: initValues
+    }) : this.state.deployModalOpen && /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_DeployModal__WEBPACK_IMPORTED_MODULE_10__["default"], {
       onClose: this.handleConfigClosed.bind(this),
       initValues: initValues
     })) : null;

@@ -22,6 +22,8 @@ import { createResultsHighlighting } from './results-highlighting/ResultsHighlig
 import ImportModal from './ImportModal';
 import HIT_POLICIES from './helper/hitPolicies';
 
+import DeployModal from './DeployModal';
+
 import {
   convertXlsxToDmn,
   convertDmnToXlsx,
@@ -397,6 +399,7 @@ export default class Dropdown extends PureComponent {
 
   handleConfigClosed(importDetails) {
     this.setState({ excelModalOpen: false });
+    this.setState({ deployModalOpen: false });
 
     if (!importDetails) {
       return;
@@ -407,6 +410,10 @@ export default class Dropdown extends PureComponent {
 
   excelOpenModal() {
     this.setState({ excelModalOpen: true });
+  }
+
+  deployOpenModal() {
+    this.setState({ deployModalOpen: true });
   }
 
   async export() {
@@ -541,7 +548,8 @@ export default class Dropdown extends PureComponent {
       decisions,
       evaluation,
       modalOpen,
-      excelModalOpen
+      excelModalOpen,
+      deployModalOpen
     } = this.state;
 
     const initValues = {
@@ -567,7 +575,7 @@ export default class Dropdown extends PureComponent {
                   <li class="row" onClick={ this.createFile.bind(this) }>Create New Testing File</li>
                   <li class="row">View/Update DMN Tests</li>
                   <li class="row">Regression Test</li>
-                  <li class="row">Deploy DMN</li>
+                  <li class="row" onClick={ this.deployOpenModal.bind(this) }>Deploy DMN</li>
 
                 </ul>
               </div>
@@ -591,8 +599,13 @@ export default class Dropdown extends PureComponent {
             initiallySelectedDecision={ decisions[0] }
             evaluate={ this.evaluateDmn }
           />
-        ) : this.state.excelModalOpen && (
+        ) : this.state.excelModalOpen ? (
           <ImportModal
+            onClose={ this.handleConfigClosed.bind(this) }
+            initValues={ initValues }
+          />
+        ) : this.state.deployModalOpen && (
+          <DeployModal
             onClose={ this.handleConfigClosed.bind(this) }
             initValues={ initValues }
           />
