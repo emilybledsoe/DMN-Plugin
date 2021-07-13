@@ -158,7 +158,7 @@ export const buildEmptyXlsx = (decisionTables) => {
     return {
       name: decisionTable.name,
       data: [
-        [ ...decisionTable.inputs, ...decisionTable.outputs ],
+        [  ],
         ...decisionTable.rules
       ]
     };

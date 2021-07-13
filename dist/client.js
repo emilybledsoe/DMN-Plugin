@@ -1747,8 +1747,8 @@ const buildJsonFromEmptyXML = async ({
     const decisionLogic = d.get('decisionLogic');
     return {
       id: d.id,
-      inputs: decisionLogic.get('input').map(buildParseableInput),
-      outputs: decisionLogic.get('output').map(buildParseableOutput),
+      inputs: new Array(),
+      outputs: new Array(),
       rules: new Array(),
       name: d.get('name')
     };
@@ -2225,7 +2225,7 @@ const buildEmptyXlsx = decisionTables => {
   const dataSheets = decisionTables.map(decisionTable => {
     return {
       name: decisionTable.name,
-      data: [[...decisionTable.inputs, ...decisionTable.outputs], ...decisionTable.rules]
+      data: [[], ...decisionTable.rules]
     };
   });
   return node_xlsx__WEBPACK_IMPORTED_MODULE_0___default.a.build(dataSheets);
