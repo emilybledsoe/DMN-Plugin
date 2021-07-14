@@ -67,7 +67,7 @@ export default class ConfigModal extends React.PureComponent {
         <Modal.Body>
 
           <div>
-            <h3>Decision to evaluate</h3>
+            <h3>Table to view</h3>
             <DecisionsDropdown
               selected={ decisionTaken }
               decisions={ decisions }
