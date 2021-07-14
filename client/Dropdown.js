@@ -15,6 +15,7 @@ import TestingModal from './TestingModal';
 import { getInputVariables } from './InputVariableHelper';
 import EngineAPI from './EngineAPI';
 import ResultsModal from './ResultsModal';
+import ViewModal from './ViewModal';
 import { map } from 'min-dash';
 
 import { createResultsHighlighting } from './results-highlighting/ResultsHighlighting';
@@ -56,6 +57,7 @@ export default class Dropdown extends PureComponent {
       open: false,
       activeTab: null,
       modalOpen: false,
+      modalView: false,
       decisions: null,
       evaluation: null,
       configOpen: false,
@@ -170,6 +172,7 @@ export default class Dropdown extends PureComponent {
 
     subscribe(PLUGIN_EVENT, () => {
       this.openModal();
+      this.viewModal();
     });
 
     // subscribe to the event when the active tab changed in the application
@@ -198,6 +201,20 @@ export default class Dropdown extends PureComponent {
     const decisions = getInputVariables(definitions);
 
     this.setState({ modalOpen: true, decisions });
+  }
+
+  viewModal = async () => {
+    const tab = await this.saveActiveTab();
+
+    // don't open modal if tab has not been saved
+    if (!tab) {
+      return;
+    }
+
+    const definitions = this.getDefinitions();
+    const decisions = getInputVariables(definitions);
+
+    this.setState({ modalView: true, decisions });
   }
 
   saveActiveTab() {
@@ -231,7 +248,8 @@ export default class Dropdown extends PureComponent {
 
     this.setState({
       evaluation: null,
-      modalOpen: false
+      modalOpen: false,
+      modalView: false
     });
   }
 
@@ -239,7 +257,8 @@ export default class Dropdown extends PureComponent {
     this.resultsHighlighting.highlightResults(this.state.evaluation.results);
 
     this.setState({
-      modalOpen: false
+      modalOpen: false,
+      modalView: false
     });
   }
 
@@ -541,6 +560,7 @@ export default class Dropdown extends PureComponent {
       decisions,
       evaluation,
       modalOpen,
+      modalView,
       excelModalOpen
     } = this.state;
 
@@ -565,7 +585,7 @@ export default class Dropdown extends PureComponent {
                   <li class="row" onClick={ this.export.bind(this) }>Export to Excel</li>
                   <li class="row" onClick={ this.openModal }>Test DMN Row</li>
                   <li class="row" onClick={ this.createFile.bind(this) }>Create New Testing File</li>
-                  <li class="row">View/Update DMN Tests</li>
+                  <li class="row" onClick={ this.viewModal }>View/Update DMN Tests</li>
                   <li class="row">Regression Test</li>
                   <li class="row">Deploy DMN</li>
 
@@ -576,7 +596,7 @@ export default class Dropdown extends PureComponent {
         </Fill>
       )}
       {
-        modalOpen && evaluation ? (
+          modalOpen && evaluation ? (
           <ResultsModal
             closeModal={ this.closeResults }
             evaluation={ evaluation }
@@ -591,7 +611,14 @@ export default class Dropdown extends PureComponent {
             initiallySelectedDecision={ decisions[0] }
             evaluate={ this.evaluateDmn }
           />
-        ) : this.state.excelModalOpen && (
+        ) : modalView ? (
+          <ViewModal
+            closeModal={ () => this.setState({ modalView: false }) }
+            decisions={ decisions }
+            initiallySelectedDecision={ decisions[0] }
+            evaluate={ this.evaluateDmn }
+          />
+        ): this.state.excelModalOpen && (
           <ImportModal
             onClose={ this.handleConfigClosed.bind(this) }
             initValues={ initValues }

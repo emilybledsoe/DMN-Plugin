@@ -139,11 +139,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _InputVariableHelper__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./InputVariableHelper */ "./client/InputVariableHelper.js");
 /* harmony import */ var _EngineAPI__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./EngineAPI */ "./client/EngineAPI.js");
 /* harmony import */ var _ResultsModal__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./ResultsModal */ "./client/ResultsModal.js");
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
-/* harmony import */ var _results_highlighting_ResultsHighlighting__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./results-highlighting/ResultsHighlighting */ "./client/results-highlighting/ResultsHighlighting.js");
-/* harmony import */ var _ImportModal__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./ImportModal */ "./client/ImportModal.js");
-/* harmony import */ var _helper_hitPolicies__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./helper/hitPolicies */ "./client/helper/hitPolicies.js");
-/* harmony import */ var _converter__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../converter */ "./converter/index.js");
+/* harmony import */ var _ViewModal__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./ViewModal */ "./client/ViewModal.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var _results_highlighting_ResultsHighlighting__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./results-highlighting/ResultsHighlighting */ "./client/results-highlighting/ResultsHighlighting.js");
+/* harmony import */ var _ImportModal__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./ImportModal */ "./client/ImportModal.js");
+/* harmony import */ var _helper_hitPolicies__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./helper/hitPolicies */ "./client/helper/hitPolicies.js");
+/* harmony import */ var _converter__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../converter */ "./converter/index.js");
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 /**
@@ -157,6 +158,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
  */
 
 /* eslint-disable no-unused-vars*/
+
 
 
 
@@ -246,6 +248,21 @@ class Dropdown extends camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MO
       });
     });
 
+    _defineProperty(this, "viewModal", async () => {
+      const tab = await this.saveActiveTab(); // don't open modal if tab has not been saved
+
+      if (!tab) {
+        return;
+      }
+
+      const definitions = this.getDefinitions();
+      const decisions = Object(_InputVariableHelper__WEBPACK_IMPORTED_MODULE_3__["getInputVariables"])(definitions);
+      this.setState({
+        modalView: true,
+        decisions
+      });
+    });
+
     _defineProperty(this, "closeResults", goBack => {
       if (goBack) {
         return this.setState({
@@ -257,14 +274,16 @@ class Dropdown extends camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MO
       this.resultsHighlighting.clear();
       this.setState({
         evaluation: null,
-        modalOpen: false
+        modalOpen: false,
+        modalView: false
       });
     });
 
     _defineProperty(this, "highlightResults", () => {
       this.resultsHighlighting.highlightResults(this.state.evaluation.results);
       this.setState({
-        modalOpen: false
+        modalOpen: false,
+        modalView: false
       });
     });
 
@@ -273,6 +292,7 @@ class Dropdown extends camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MO
       open: false,
       activeTab: null,
       modalOpen: false,
+      modalView: false,
       decisions: null,
       evaluation: null,
       configOpen: false,
@@ -281,7 +301,7 @@ class Dropdown extends camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MO
       hitPolicy: 'Unique',
       tableName: ''
     };
-    this.resultsHighlighting = Object(_results_highlighting_ResultsHighlighting__WEBPACK_IMPORTED_MODULE_7__["createResultsHighlighting"])(this);
+    this.resultsHighlighting = Object(_results_highlighting_ResultsHighlighting__WEBPACK_IMPORTED_MODULE_8__["createResultsHighlighting"])(this);
   }
 
   componentWillUnmount() {
@@ -292,7 +312,7 @@ class Dropdown extends camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MO
   getResults(rawResults) {
     const definitions = this.getDefinitions();
     const drg = definitions.get('drgElement');
-    const results = Object(min_dash__WEBPACK_IMPORTED_MODULE_6__["map"])(rawResults, ({
+    const results = Object(min_dash__WEBPACK_IMPORTED_MODULE_7__["map"])(rawResults, ({
       rules
     }, decisionId) => {
       const businessObject = drg.find(({
@@ -350,6 +370,7 @@ class Dropdown extends camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MO
     } = this.props;
     subscribe(PLUGIN_EVENT, () => {
       this.openModal();
+      this.viewModal();
     }); // subscribe to the event when the active tab changed in the application
 
     subscribe('app.activeTabChanged', ({
@@ -477,7 +498,7 @@ class Dropdown extends camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MO
       hitPolicy,
       aggregation
     } = options;
-    const xml = Object(_converter__WEBPACK_IMPORTED_MODULE_10__["convertXlsxToDmn"])({
+    const xml = Object(_converter__WEBPACK_IMPORTED_MODULE_11__["convertXlsxToDmn"])({
       buffer,
       amountOutputs,
       tableName,
@@ -578,7 +599,7 @@ class Dropdown extends camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MO
       const {
         contents,
         exportedDecisionTables
-      } = await Object(_converter__WEBPACK_IMPORTED_MODULE_10__["convertDmnToXlsx"])({
+      } = await Object(_converter__WEBPACK_IMPORTED_MODULE_11__["convertDmnToXlsx"])({
         xml: file.contents
       }); // (3) save file on disk
 
@@ -631,7 +652,7 @@ class Dropdown extends camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MO
       const {
         contents,
         exportedDecisionTables
-      } = await Object(_converter__WEBPACK_IMPORTED_MODULE_10__["convertEmptyDmnToXlsx"])({
+      } = await Object(_converter__WEBPACK_IMPORTED_MODULE_11__["convertEmptyDmnToXlsx"])({
         xml: file.contents
       }); // (3) save file on disk
 
@@ -659,6 +680,7 @@ class Dropdown extends camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MO
       decisions,
       evaluation,
       modalOpen,
+      modalView,
       excelModalOpen
     } = this.state;
     const initValues = {
@@ -692,7 +714,8 @@ class Dropdown extends camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MO
       class: "row",
       onClick: this.createFile.bind(this)
     }, "Create New Testing File"), /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
-      class: "row"
+      class: "row",
+      onClick: this.viewModal
     }, "View/Update DMN Tests"), /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
       class: "row"
     }, "Regression Test"), /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
@@ -710,7 +733,14 @@ class Dropdown extends camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MO
       decisions: decisions,
       initiallySelectedDecision: decisions[0],
       evaluate: this.evaluateDmn
-    }) : this.state.excelModalOpen && /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_ImportModal__WEBPACK_IMPORTED_MODULE_8__["default"], {
+    }) : modalView ? /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_ViewModal__WEBPACK_IMPORTED_MODULE_6__["default"], {
+      closeModal: () => this.setState({
+        modalView: false
+      }),
+      decisions: decisions,
+      initiallySelectedDecision: decisions[0],
+      evaluate: this.evaluateDmn
+    }) : this.state.excelModalOpen && /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_ImportModal__WEBPACK_IMPORTED_MODULE_9__["default"], {
       onClose: this.handleConfigClosed.bind(this),
       initValues: initValues
     })) : null;
@@ -740,7 +770,7 @@ const createOutputPath = details => {
 };
 
 const toHitPolicy = rawValue => {
-  return _helper_hitPolicies__WEBPACK_IMPORTED_MODULE_9__["default"][rawValue];
+  return _helper_hitPolicies__WEBPACK_IMPORTED_MODULE_10__["default"][rawValue];
 };
 
 const NoopHandler = function () {
@@ -1543,6 +1573,101 @@ class ConfigModal extends react__WEBPACK_IMPORTED_MODULE_0___default.a.PureCompo
       className: "btn btn-primary",
       form: "dmnTestingInputVarsForm"
     }, "Test"))));
+  }
+
+}
+
+/***/ }),
+
+/***/ "./client/ViewModal.js":
+/*!*****************************!*\
+  !*** ./client/ViewModal.js ***!
+  \*****************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return ConfigModal; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/camunda-modeler-plugin-helpers/react.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _DecisionsDropdown__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./DecisionsDropdown */ "./client/DecisionsDropdown.js");
+/* harmony import */ var camunda_modeler_plugin_helpers_components__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! camunda-modeler-plugin-helpers/components */ "./node_modules/camunda-modeler-plugin-helpers/components.js");
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+ // eslint-disable-line no-unused-vars
+//import { Formik, Form, Field, FieldArray } from 'formik';
+
+
+ // we can even use hooks to render into the application
+
+class ConfigModal extends react__WEBPACK_IMPORTED_MODULE_0___default.a.PureComponent {
+  constructor(props) {
+    super(props);
+
+    _defineProperty(this, "updateDecision", value => {
+      this.setState({
+        decisionTaken: value
+      });
+    });
+
+    _defineProperty(this, "handleSubmit", values => {
+      this.props.evaluate({
+        variables: values.variables,
+        decision: this.state.decisionTaken
+      });
+    });
+
+    this.state = {
+      decisionTaken: props.decisions[0]
+    };
+  }
+
+  render() {
+    const {
+      closeModal,
+      decisions,
+      initiallySelectedDecision
+    } = this.props;
+    const {
+      decisionTaken = initiallySelectedDecision
+    } = this.state; // flatten to make it easier to display and extend with own variables
+    // TODO: get rid of nested loop
+
+    const allInputVariables = decisions.flatMap(decision => {
+      return decision.variables.map(variable => ({
+        decision: decision.decision,
+        decisionId: decision.decisionId,
+        name: variable.expression,
+        type: variable.type,
+        value: ''
+      }));
+    });
+    const allowedDecisions = [decisionTaken.decisionId, ...decisionTaken.downstreamDecisions];
+    const filteredInputVariables = allInputVariables.filter(variable => allowedDecisions.includes(variable.decisionId));
+    const initialValues = {
+      variables: filteredInputVariables
+    };
+
+    const onClose = () => closeModal();
+
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(camunda_modeler_plugin_helpers_components__WEBPACK_IMPORTED_MODULE_2__["Modal"], {
+      onClose: onClose
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(camunda_modeler_plugin_helpers_components__WEBPACK_IMPORTED_MODULE_2__["Modal"].Title, null, "View/Update DMN Tests"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(camunda_modeler_plugin_helpers_components__WEBPACK_IMPORTED_MODULE_2__["Modal"].Body, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3", null, "Decision to evaluate"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_DecisionsDropdown__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      selected: decisionTaken,
+      decisions: decisions,
+      onDecisionChanged: this.updateDecision
+    }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(camunda_modeler_plugin_helpers_components__WEBPACK_IMPORTED_MODULE_2__["Modal"].Footer, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      id: "autoSaveConfigButtons"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+      type: "button",
+      className: "btn btn-secondary",
+      onClick: () => onClose()
+    }, "Cancel"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+      type: "submit",
+      className: "btn btn-primary",
+      form: "dmnTestingInputVarsForm"
+    }, "View"))));
   }
 
 }
